@@ -60,7 +60,7 @@ exports.signIn = async (req, res) => {
 
     let user = await db.user.findOne({
       where: {
-        username: req.require.username,
+        username: req.body.username,
         state: "1",
       },
     });
