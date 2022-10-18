@@ -2,8 +2,6 @@ module.exports = (express, app) => {
   const controller = require("../controllers/user.controller.js");
   const router = express.Router();
 
-  router.get("/", controller.all);
-
   // Select all users.
   router.get("/profile", controller.getProfile);
 
@@ -18,7 +16,7 @@ module.exports = (express, app) => {
   router.post("/follow/:user_id", controller.followUser);
 
   router.post("/unfollow/:user_id", controller.unfollowUser);
-
+  
   // Add routes to server.
   app.use("/api/users", router);
 };

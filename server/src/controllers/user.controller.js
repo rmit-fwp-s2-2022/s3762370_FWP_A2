@@ -2,19 +2,6 @@ const _ = require("lodash");
 const Joi = require("joi"); 
 const db = require("../database");
 
-exports.all = async (req, res) => {
-  try{
-    const users = await db.user.findAll();
-    res.json(users);
-
-    const returnData = JSON.parse(JSON.stringify(user));
-
-    return res.json({ success: 1, data: returnData });
-  } catch (err) {
-    return res.json({ success: 0, data: err });
-  }
-};
-
 exports.getProfile = async (req, res) => {
   try {
     if (!req.user_id) {
@@ -26,7 +13,7 @@ exports.getProfile = async (req, res) => {
         state: "1",
       },
     });
-    
+
     if (_.isEmpty(user)) {
       throw "User do not exit";
     }
@@ -47,7 +34,13 @@ exports.updateProfile = async (req, res) => {
     }
 
     const schema = Joi.object({
-      username: Joi.string().alphanum().min(3).max(30).required(),
+      
+      email: Joi.string()
+        .email({
+          minDomainSegments: 2,
+          tlds: { allow: ["com", "net"] },
+        })
+        .required(),
     });
 
     await schema.validateAsync(req.body);
@@ -63,8 +56,8 @@ exports.updateProfile = async (req, res) => {
       throw "User do not exit";
     }
 
-    if (req.body.username) {
-      user.username = req.body.username;
+    if (req.body.email) {
+      user.email = req.body.email;
     }
 
     user = await user.save();
@@ -219,5 +212,5 @@ exports.unfollowUser = async (req, res) => {
     return res.json({ success: 1, data: {} });
   } catch (err) {
     return res.json({ success: 0, data: err });
-  }
+  };
 };

@@ -3,10 +3,10 @@ module.exports = (express, app) => {
   const router = express.Router();
 
   // Create a new user.
-  router.post("/sign-up", controller.signUp);
+  router.post("/sign-up", controller.signUp); 
 
   // Sign in as a user
-  router.post("/sign-in", controller.signIn);
+  router.post("/sign-in", controller.signIn); 
 
   // Add routes to server.
   app.use("/api/auth", router);
