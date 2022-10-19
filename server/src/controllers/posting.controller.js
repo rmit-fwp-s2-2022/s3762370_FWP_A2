@@ -4,21 +4,21 @@ const db = require("../database");
 
 exports.getUserPostings = async (req, res) => {
   try {
-    if (!req.user_id) {
+    if (!req.headers.user_id) {
       throw "Auth Failed or session expired";
     }
 
     let follow = null;
-    if (req.user_id != req.params.user_id) {
+    if (req.headers.user_id != req.params.user_id) {
       follow = await db.follow.findOne({
         where: {
-          user_id: req.user_id,
+          user_id: req.headers.user_id,
           follow_user_id: req.params.user_id,
         },
       });
     }
 
-    if (req.user_id == req.params.user_id || !_.isEmpty(follow)) {
+    if (req.headers.user_id == req.params.user_id || !_.isEmpty(follow)) {
       const postings = await db.posting.findAll({
         where: {
           user_id: req.params.user_id,
@@ -35,7 +35,7 @@ exports.getUserPostings = async (req, res) => {
 
 exports.getPosting = async (req, res) => {
   try {
-    if (!req.user_id) {
+    if (!req.headers.user_id) {
       throw "Auth Failed or session expired";
     }
     const posting = await db.posting.findOne({
@@ -44,10 +44,10 @@ exports.getPosting = async (req, res) => {
       },
     });
 
-    if (req.user_id != posting.user_id) {
+    if (req.headers.user_id != posting.user_id) {
       const follow = await db.follow.findOne({
         where: {
-          user_id: req.user_id,
+          user_id: req.headers.user_id,
           follow_user_id: posting.user_id,
         },
       });
@@ -79,7 +79,7 @@ exports.getPosting = async (req, res) => {
 
 exports.createPosting = async (req, res) => {
   try {
-    if (!req.user_id) {
+    if (!req.headers.user_id) {
       throw "Auth Failed or session expired";
     }
 
@@ -91,7 +91,7 @@ exports.createPosting = async (req, res) => {
     await schema.validateAsync(req.body);
 
     const posting = await db.posting.create({
-      user_id: req.user_id,
+      user_id: req.headers.user_id,
       content: req.body.content,
       url: req.body.url,
     });
@@ -104,7 +104,7 @@ exports.createPosting = async (req, res) => {
 
 exports.editPosting = async (req, res) => {
   try {
-    if (!req.user_id) {
+    if (!req.headers.user_id) {
       throw "Auth Failed or session expired";
     }
 
@@ -117,7 +117,7 @@ exports.editPosting = async (req, res) => {
 
     let posting = await db.posting.findOne({
       where: {
-        user_id: req.user_id,
+        user_id: req.headers.user_id,
         posting_id: req.params.posting_id,
       },
     });
@@ -144,13 +144,13 @@ exports.editPosting = async (req, res) => {
 
 exports.deletePosting = async (req, res) => {
   try {
-    if (!req.user_id) {
+    if (!req.headers.user_id) {
       throw "Auth Failed or session expired";
     }
 
     let posting = await db.posting.findOne({
       where: {
-        user_id: req.user_id,
+        user_id: req.headers.user_id,
         posting_id: req.params.posting_id,
       },
     });
@@ -174,7 +174,7 @@ exports.deletePosting = async (req, res) => {
 
 exports.replyPosting = async (req, res) => {
   try {
-    if (!req.user_id) {
+    if (!req.headers.user_id) {
       throw "Auth Failed or session expired";
     }
 
@@ -194,10 +194,10 @@ exports.replyPosting = async (req, res) => {
       throw "Posting not exist";
     }
 
-    if (req.user_id != posting.user_id) {
+    if (req.headers.user_id != posting.user_id) {
       const follow = await db.follow.findOne({
         where: {
-          user_id: req.user_id,
+          user_id: req.headers.user_id,
           follow_user_id: posting.user_id,
         },
       });
@@ -209,7 +209,7 @@ exports.replyPosting = async (req, res) => {
 
     const reply = await db.posting_reply.create({
       posting_id: req.params.posting_id,
-      user_id: req.user_id,
+      user_id: req.headers.user_id,
       content: req.body.content,
     });
 

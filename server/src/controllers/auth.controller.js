@@ -1,6 +1,5 @@
 const CryptoJS = require("crypto-js"); // https://www.npmjs.com/package/crypto-js encryption
 const Joi = require("joi"); // https://www.npmjs.com/package/js-joi?activeTab=readme & https://zhongwq.github.io/SystemAnalysis/Node.js%20joi%E4%BD%BF%E7%94%A8  Data format validation
-const Jsonwebtoken = require("jsonwebtoken");// https://www.npmjs.com/package/jsonwebtoken & https://blog.csdn.net/weixin_43527871/article/details/123120835
 const db = require("../database");// W8 prac
 
 // sign up.
@@ -78,16 +77,7 @@ exports.signIn = async (req, res) => {
       throw "password error";
     }
 
-    let session_token = Jsonwebtoken.sign({ user_id: user.user_id }, "111", {
-      expiresIn: 43600,
-    });
-
-    return res.json({
-      success: 1,
-      data: {
-        Authorization: session_token,
-      },
-    });
+    return res.json({ success: 1});
   } catch (err) {
     return res.json({ success: 0, data: err });
   }
