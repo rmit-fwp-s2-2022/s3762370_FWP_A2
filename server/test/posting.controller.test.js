@@ -3,14 +3,14 @@ const request = require("supertest");
 const app = require("../app");
 
 describe("Postings", () => {
-  let token = "";
+  // let token = "";
   beforeAll(async () => {
     let response = await request(app).post("/api/auth/sign-in").send({
       email: "test@abc.com",
       password: "123456",
     });
 
-    token = response.body.data.Authorization;
+    // token = response.body.data.Authorization;
   });
 
   afterAll((done) => {
@@ -20,7 +20,7 @@ describe("Postings", () => {
   test("Postings", async () => { 
     let response = await request(app)
       .post("/api/postings")
-      .set({ Authorization: token })
+      .set({ User_id: 7 })
       .send({
         content: "bla,bla,bla",
         url: "aaaaaa",
@@ -30,7 +30,7 @@ describe("Postings", () => {
     
     response = await request(app)
       .put("/api/postings/" + posting.posting_id)
-      .set({ Authorization: token })
+      .set({ User_id: 7 })
       .send({
         content: "lalalalal",
       });
@@ -38,7 +38,7 @@ describe("Postings", () => {
 
     response = await request(app)
       .post("/api/postings/reply/" + posting.posting_id)
-      .set({ Authorization: token })
+      .set({ User_id: 7 })
       .send({
         content: "alalalalal",
       });
@@ -46,7 +46,7 @@ describe("Postings", () => {
 
     response = await request(app)
       .delete("/api/postings/" + posting.posting_id)
-      .set({ Authorization: token })
+      .set({ User_id: 7 })
     expect(response.status).toBe(200);
   });
 });
