@@ -1,65 +1,65 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { TextTitle } from "../Layout/Layoutcss";
-import Main from "../Layout/main";
-import { verifyUser } from "../data/repository";
+import { useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
+import { TextTitle } from "../Layout/Layoutcss"
+import Main from "../Layout/main"
+import { verifyUser } from "../data/repository"
 
 
 const Login = (props) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const [fields, setFields] = useState({
-        username : '',
-        password : ''
-    });
+        username: '',
+        password: ''
+    })
 
-    const [err, setErr] = useState(null);
-    const [showError, setShowError] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
+    const [err, setErr] = useState(null)
+    const [showError, setShowError] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleChange = (e) => {
-        e.preventDefault();
-        setFields(fields => ({...fields, [e.target.name] : e.target.value }));
+        e.preventDefault()
+        setFields(fields => ({ ...fields, [e.target.name]: e.target.value }))
     }
 
     // ここでAPIに保存
     //　save by API
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
         console.log("pre-checking")
 
         // const newUser = await verifyUser(fields.username, fields.password);
-        const newUser = await verifyUser(fields);
+        const newUser = await verifyUser(fields)
 
         console.log("middle-checking")
 
-        if(newUser === null) {
-          // Login failed, reset password field to blank and set error message.
-          setFields({ ...fields, password: "" });
-          setErr("Username and / or password invalid, please try again.");
-          return;
+        if (newUser.success === 0) {
+            // Login failed, reset password field to blank and set error message.
+            setFields({ ...fields, password: "" })
+            setErr("Username and / or password invalid, please try again.")
+            return
         }
         console.log("after-checking")
-        console.log(newUser);
+        console.log(newUser)
 
         // Set user state.
-        props.loginUser(newUser);
+        props.loginUser(newUser.user)
 
         // Navigate to the home page.
-        navigate("/");
-    };
+        navigate("/")
+    }
 
     return (
         <Main>
             <form onSubmit={handleSubmit} className={"text-center"}>
-            <TextTitle>Log in</TextTitle>
+                <TextTitle>Log in</TextTitle>
                 <input name="username" id="username" className="border-b-2 border-slate-800 my-3"
-                value={fields.username} onChange={handleChange} placeholder="Name" />
+                    value={fields.username} onChange={handleChange} placeholder="Name" />
                 <br />
                 <input className="border-b-2 border-slate-800 my-3" type={showPassword ? "text" : "password"}
-                name="password" id="password" value={fields.password} onChange= {handleChange} placeholder="Password" />
+                    name="password" id="password" value={fields.password} onChange={handleChange} placeholder="Password" />
                 <br />
-                <input type={"checkbox"} onChange = {()=> setShowPassword(!showPassword)}></input>
+                <input type={"checkbox"} onChange={() => setShowPassword(!showPassword)}></input>
                 <small> show password</small>
                 <br />
                 <button type="submit" className="bg-purple-500 rounded-md shadow-md hover:shadow-none hover:bg-purple-800 text-white py-2 px-5 font-bold" >Login</button>
@@ -72,6 +72,6 @@ const Login = (props) => {
 
             </form>
         </Main>
-    );
+    )
 }
 export default Login
