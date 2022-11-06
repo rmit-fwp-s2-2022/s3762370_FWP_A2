@@ -40,8 +40,15 @@ async function createUser (fields) {
 
 // オリジナル-!-!-!-!-!-!-!-!-!-!-!-!-!
 async function updateUser (fields) {
-  let response = await axios.put("http://localhost:4000/api/users/profile").set({ user_id: fields.user_id }).send({
-    email: fields.email,
+  let response = await axios({
+    method: 'put',
+    url: 'http://localhost:4000/api/users/profile',
+    headers: {
+      user_id: fields.user_id
+    },
+    data: {
+      email: fields.email
+    }
   })
 
   return response.data
@@ -56,15 +63,18 @@ async function getPosts () {
 }
 
 // create a post
-async function createPost (post) {
-  const response = await axios.post(API_HOST + "/api/posting", post)
+async function createPost (fields) {
+  let response = await axios.put("http://localhost:4000/api/posting").set({ user_id: fields.user_id }).send({
+    content: fields.content,
+    url: fields.url
+  })
 
   return response.data
 }
 
 // --- Helper functions to interact with local storage --------------------------------------------
 function setUser (user) {
-  localStorage.setItem(USER_KEY, JSON.stringify(user))
+  localStorage.setItem(USER_KEY, JSON.stringify(user.user))
 }
 
 function getUser () {
