@@ -38,13 +38,9 @@ export default function Register (props) {
       return
     }
 
-    console.log(trimmedFields)
-
     // Create user.
     const user = (trimmedFields)
     await createUser(trimmedFields)
-    // const user = (trimmedFields);
-    // await axios.post("http://localhost:4000/api/auth/sign-up", trimmedFields);
 
     // Set user state.
     props.loginUser(user)

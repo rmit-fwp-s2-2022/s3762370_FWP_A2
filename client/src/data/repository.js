@@ -40,7 +40,9 @@ async function createUser (fields) {
 
 // オリジナル-!-!-!-!-!-!-!-!-!-!-!-!-!
 async function updateUser (fields) {
-  const response = await axios.put("http://localhost:4000/api/users/profile", fields)
+  let response = await axios.put("http://localhost:4000/api/users/profile").set({ user_id: fields.user_id }).send({
+    email: fields.email,
+  })
 
   return response.data
 }
@@ -77,5 +79,5 @@ export {
   // findUser,
   verifyUser, createUser,
   getPosts, createPost,
-  getUser, removeUser
+  getUser, removeUser, updateUser
 }
