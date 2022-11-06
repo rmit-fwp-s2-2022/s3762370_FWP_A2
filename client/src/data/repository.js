@@ -5,6 +5,13 @@ const API_HOST = "http://localhost:4000"
 const USER_KEY = "user"
 
 // --- Auth & User ---------------------------------------------------------------------------------------
+async function findUser (user_id) {
+  const response = await axios.get("http://localhost:4000/api/users/profile", { headers: { user_id: user_id } })
+
+  const user = response.data.data
+  return user
+}
+
 async function verifyUser (fields) {
   console.log(fields)
   const response = await axios.post("http://localhost:4000/api/auth/sign-in", fields)
@@ -17,18 +24,10 @@ async function verifyUser (fields) {
 
   // NOTE: In this example the login is also persistent as it is stored in local storage.
   if (user.success === 1)
-    setUser(user)
+    setUser(user.user)
 
   return user
 }
-
-// 実装されていない-!-!-!-!-!-!-!-!-!-!-!-!-!
-// async function findUser(id) {
-//   const response = await axios.get(API_HOST + `/api/users/select/${id}`);
-
-//   return response.data;
-// }
-// -!-!-!-!-!-!-!-!-!-!-!-!-!
 
 async function createUser (fields) {
 
@@ -51,6 +50,11 @@ async function updateUser (fields) {
     }
   })
 
+  const user = response.data
+  if (user.success === 1) {
+    setUser(user.data)
+  }
+
   return response.data
 }
 
@@ -64,9 +68,16 @@ async function getPosts () {
 
 // create a post
 async function createPost (fields) {
-  let response = await axios.put("http://localhost:4000/api/posting").set({ user_id: fields.user_id }).send({
-    content: fields.content,
-    url: fields.url
+  let response = await axios({
+    method: 'post',
+    url: 'http://localhost:4000/api/postings/',
+    headers: {
+      user_id: fields.user_id
+    },
+    data: {
+      content: fields.content,
+      url: fields.url
+    }
   })
 
   return response.data
@@ -74,7 +85,7 @@ async function createPost (fields) {
 
 // --- Helper functions to interact with local storage --------------------------------------------
 function setUser (user) {
-  localStorage.setItem(USER_KEY, JSON.stringify(user.user))
+  localStorage.setItem(USER_KEY, JSON.stringify(user))
 }
 
 function getUser () {
@@ -87,7 +98,7 @@ function removeUser () {
 
 export {
   // findUser,
-  verifyUser, createUser,
+  findUser, verifyUser, createUser,
   getPosts, createPost,
-  getUser, removeUser, updateUser
+  getUser, removeUser, updateUser, setUser
 }

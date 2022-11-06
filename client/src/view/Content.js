@@ -1,30 +1,26 @@
-import { PostImage,Text, TextTitle } from "../Layout/Layoutcss";
+import { PostImage, Text, TextTitle } from "../Layout/Layoutcss"
 
-import React, { useState } from "react";
-import Main from "../Layout/main";
-import Profile from "./Profile";
+import React, { useState } from "react"
+import Main from "../Layout/main"
+import Profile from "./Profile"
+import { findUser } from "../data/repository"
 
-const Content =(props)=>{
+const Content = (props) => {
 
-    const [username, setUsername] = useState(localStorage.getItem('fullName'));
+    // const [username, setUsername] = useState(localStorage.getItem('fullName'))
 
-    
+    // console.log(users.username)
 
     return (
         <Main>
-            <Profile userLoggedIn={username}/>
+            <Profile userLoggedIn={props.user.username} />
             <div className="mt-10 text-[#404040]">
-                <TextTitle>Lorem ipsum dolor</TextTitle>
+                <TextTitle>Welcome, {props.user.username}</TextTitle>
                 <Text>quam pellentesque, Dec 1t,2018</Text>
-                <PostImage src="/images/image1.jpg" alt="Image" />
-                <Text>Nisi vitae suscipt..</Text>
-                <Text>Semper quis lectus nulla at. Nullam ac tortor viae faucibus ornare</Text>
-                <TextTitle>Placerat vestibulum</TextTitle>
-                <Text>elementum Integer enim neque, Sep 21,2018</Text>
-                <PostImage src="/images/image2.jpg" alt="Image" />
+
             </div>
         </Main>
-    );
+    )
 }
 
 export default Content
