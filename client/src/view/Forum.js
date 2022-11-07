@@ -59,14 +59,21 @@ export default function Forum (props) {
     }
 
     // Create post.
-    const newPost = { content: post }
+    const newPost = {
+      content: post,
+      user_id: props.user.user_id,
+      username: props.user.user_name
+    }
 
     // -------****-----------------link to the backend-----------------****----------
     await createPost(newPost)
     // -------****-----------------*******************-----------------****----------
 
     // Add post to locally stored posts.
-    setPosts([...posts, newPost])
+    const currentPosts = await getPosts()
+
+    setPosts(currentPosts)
+    console.log(posts)
 
     resetPostContent()
   }

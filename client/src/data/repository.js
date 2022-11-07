@@ -67,16 +67,15 @@ async function getPosts () {
 }
 
 // create a post
-async function createPost (fields) {
+async function createPost (newPost) {
   let response = await axios({
     method: 'post',
     url: 'http://localhost:4000/api/postings/',
     headers: {
-      user_id: fields.user_id
+      user_id: newPost.user_id
     },
     data: {
-      content: fields.content,
-      url: fields.url
+      content: newPost.content
     }
   })
 
