@@ -30,6 +30,7 @@ export default function Forum (props) {
   useEffect(() => {
     async function loadPosts () {
       const currentPosts = await getPosts()
+
       setPosts(currentPosts)
       setIsLoading(false)
     }
@@ -58,7 +59,7 @@ export default function Forum (props) {
     }
 
     // Create post.
-    const newPost = { text: post }
+    const newPost = { content: post }
 
     // -------****-----------------link to the backend-----------------****----------
     await createPost(newPost)
@@ -109,34 +110,34 @@ export default function Forum (props) {
         </form>
 
         {/* to show reply page, after database is complete do this function*/}
-        {/* {showModal ? (
-        <>
-          <form onSubmit={handleReply}>
-            <fieldset>
-              <TextTitle>Replying</TextTitle>
-              <div className="form-group" style={{ marginBottom: "60px" }}>
-                <ReactQuill theme="snow" value={reply} onChange={setReply} style={{ height: "180px" }} />
-              </div>
-              {errorMessage !== null &&
-                <div className="form-group">
-                  <span className="text-red-500 text-xs italic">{errorMessage}</span>
+        {showModal ? (
+          <>
+            <form onSubmit={handleReply}>
+              <fieldset>
+                <TextTitle>Replying</TextTitle>
+                <div className="form-group" style={{ marginBottom: "60px" }}>
+                  <ReactQuill theme="snow" value={reply} onChange={setReply} style={{ height: "180px" }} />
                 </div>
-              }
-              <div className="form-group">
-                <input
-                  type="button"
-                  className="bg-purple-500 rounded-md shadow-md hover:shadow-none hover:bg-purple-800 text-white py-2 px-5 font-bold cursor-pointer" 
-                  value="Cancel"
-                  onClick={cancelReply} />
-                <input 
-                  type="submit"
-                  className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2" 
-                  value="Reply" />
-              </div>
-            </fieldset>
-          </form>
-        </>
-      ) : null} */}
+                {errorMessage !== null &&
+                  <div className="form-group">
+                    <span className="text-red-500 text-xs italic">{errorMessage}</span>
+                  </div>
+                }
+                <div className="form-group">
+                  <input
+                    type="button"
+                    className="bg-purple-500 rounded-md shadow-md hover:shadow-none hover:bg-purple-800 text-white py-2 px-5 font-bold cursor-pointer"
+                    value="Cancel"
+                    onClick={cancelReply} />
+                  <input
+                    type="submit"
+                    className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
+                    value="Reply" />
+                </div>
+              </fieldset>
+            </form>
+          </>
+        ) : null}
 
         {/* user forum part copy from Lec.9*/}
         <hr />
@@ -151,11 +152,12 @@ export default function Forum (props) {
               posts.map((x) =>
                 <div className="border my-4 p-4 border-slate-600">
                   <h6 className="text-base text-black">{x.username}</h6>
-                  <div dangerouslySetInnerHTML={{ __html: x.text }} />
-                  <button
-                    className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2">
-                    {/* onClick={() => setShowModal(true)} */}
-                  </button >
+                  <div dangerouslySetInnerHTML={{ __html: x.content }} />
+                  <input
+                    type="button"
+                    className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
+                    value="Reply"
+                    onClick={() => setShowModal(true)} />
                 </div>
               )
           }

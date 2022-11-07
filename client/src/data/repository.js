@@ -61,7 +61,7 @@ async function updateUser (fields) {
 // --- Post ---------------------------------------------------------------------------------------
 // get a post data
 async function getPosts () {
-  const response = await axios.get(API_HOST + "/api/posts/:user_id")
+  const response = await axios.get(API_HOST + "/api/postings")
 
   return response.data
 }

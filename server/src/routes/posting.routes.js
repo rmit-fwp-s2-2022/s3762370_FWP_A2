@@ -1,19 +1,21 @@
 module.exports = (express, app) => {
-  const controller = require("../controllers/posting.controller.js");
-  const router = express.Router();
+  const controller = require("../controllers/posting.controller.js")
+  const router = express.Router()
 
-  router.get("/users/:user_id", controller.getUserPostings);
+  router.get("/users/:user_id", controller.getUserPostings)
 
-  router.get("/:posting_id", controller.getPosting);
+  router.get("/:posting_id", controller.getPosting)
 
-  router.post("/", controller.createPosting);
+  router.post("/", controller.createPosting)
 
-  router.put("/:posting_id", controller.editPosting);
+  router.get("/", controller.getAllPosting)
 
-  router.delete("/:posting_id", controller.deletePosting);
-  
-  router.post("/reply/:posting_id", controller.replyPosting);
+  router.put("/:posting_id", controller.editPosting)
+
+  router.delete("/:posting_id", controller.deletePosting)
+
+  router.post("/reply/:posting_id", controller.replyPosting)
 
   // Add routes to server.
-  app.use("/api/postings", router);
-};
+  app.use("/api/postings", router)
+}
