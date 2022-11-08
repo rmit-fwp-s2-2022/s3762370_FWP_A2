@@ -1,45 +1,44 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   useNavigate,
-} from "react-router-dom";
-import Login from "../forms/Login";
-import Register from "../forms/Register";
-import Forum from "../view/Forum";
-import Content from "../view/Content";
-import UserList from "../view/UserList";
-import EditUser from "../forms/EditUser";
-import Navigation from "../view/Navigation";
-import { removeUser } from "../data/repository";
-import { getUser } from "../data/repository";
+} from "react-router-dom"
+import Login from "../forms/Login"
+import Register from "../forms/Register"
+import Forum from "../view/Forum"
+import Content from "../view/Content"
+import UserList from "../view/UserList"
+import EditUser from "../forms/EditUser"
+import Navigation from "../view/Navigation"
+import { removeUser } from "../data/repository"
+import { getUser } from "../data/repository"
 
 const AuthGuard = ({ authenticated, children }) => {
   //TODO: Add AuthGuard to all the page that has to be protected
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("layout");
     if (!authenticated) {
-      navigate("/login");
+      navigate("/login")
     }
-  }, [authenticated, navigate]);
+  }, [authenticated, navigate])
 
-  return authenticated ? children : null;
-};
+  return authenticated ? children : null
+}
 
-function Routing() {
-  const [user, setUser] = useState(getUser());
+function Routing () {
+  const [user, setUser] = useState(getUser())
 
   const loginUser = (user) => {
-    setUser(user);
-  };
+    setUser(user)
+  }
 
   const logoutUser = () => {
-    removeUser();
-    setUser(null);
-  };
+    removeUser()
+    setUser(null)
+  }
 
   return (
     <>
@@ -66,6 +65,6 @@ function Routing() {
         </Routes>
       </Router>
     </>
-  );
+  )
 }
-export default Routing;
+export default Routing

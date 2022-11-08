@@ -23,7 +23,6 @@ export default function Register (props) {
   }
 
   const handleSubmit = async (event) => {
-    console.log(fields)
     // submitが押されたことによる画面遷移を阻止。
     // Prevents screen transitions caused by a submit being pressed.
     event.preventDefault()
@@ -41,9 +40,11 @@ export default function Register (props) {
     // Create user.
     const user = (trimmedFields)
     await createUser(trimmedFields)
+    console.log("user")
+    console.log(newUser.data)
 
     // Set user state.
-    props.loginUser(user)
+    props.loginUser(newUser.data)
 
     // Navigate to the home page.
     navigate("/")

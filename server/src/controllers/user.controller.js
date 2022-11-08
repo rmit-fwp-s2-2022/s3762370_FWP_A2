@@ -110,7 +110,6 @@ exports.searchUsers = async (req, res) => {
       t.username LIKE ?)
     `
   let username = req.body.username + "%"
-  console.log(username)
   let replacements = [username, username]
   let users = await db.simpleSelect(query, replacements)
   let returnData = JSON.parse(JSON.stringify(users))

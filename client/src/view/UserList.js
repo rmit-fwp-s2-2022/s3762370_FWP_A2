@@ -1,39 +1,38 @@
-import { useState, useEffect } from "react";
-import { findAllUser, searchUser, followUsers } from "../data/repository";
+import { useState, useEffect } from "react"
+import { findAllUser, searchUser, followUsers } from "../data/repository"
 
-export default function Users(props) {
-  const [users, setUsers] = useState([]);
+export default function Users (props) {
+  const [users, setUsers] = useState([])
   const [field, setField] = useState({
     username: "",
-  });
-  const [username, setUsername] = useState("");
+  })
+  const [username, setUsername] = useState("")
 
   // Load users.
   useEffect(() => {
-    async function loadUsers() {
-      const UserList = await findAllUser();
-      setUsers(UserList);
+    async function loadUsers () {
+      const UserList = await findAllUser()
+      setUsers(UserList)
     }
-    loadUsers();
-  }, []);
+    loadUsers()
+  }, [])
 
   // Generic change handler.
   const handleInputChange = (e) => {
-    e.preventDefault();
-    setField((field) => ({ ...field, [e.target.name]: e.target.value }));
-  };
+    e.preventDefault()
+    setField((field) => ({ ...field, [e.target.name]: e.target.value }))
+  }
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    setUsername(field.username);
-    async function loadUsers() {
-      const UserList = await searchUser(field);
-      setUsers(UserList);
-      console.log(UserList);
+    setUsername(field.username)
+    async function loadUsers () {
+      const UserList = await searchUser(field)
+      setUsers(UserList)
     }
-    loadUsers();
-  };
+    loadUsers()
+  }
 
   return (
     <div>
@@ -83,5 +82,5 @@ export default function Users(props) {
         </table>
       )}
     </div>
-  );
+  )
 }

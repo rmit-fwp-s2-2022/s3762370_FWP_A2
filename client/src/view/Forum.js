@@ -43,11 +43,9 @@ export default function Forum (props) {
     // -------****-----------------*******************-----------------****----------
 
     // Add post to locally stored posts.
-    console.log(newPost)
     const currentPosts = await getPosts()
 
     setPosts(currentPosts)
-    console.log(posts)
 
     resetPostContent()
   }

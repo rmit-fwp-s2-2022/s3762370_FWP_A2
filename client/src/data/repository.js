@@ -20,7 +20,6 @@ async function findAllUser () {
 }
 
 async function searchUser (fields) {
-  console.log(fields)
   const response = await axios.get(
     "http://localhost:4000/api/users/search",
     fields
@@ -71,6 +70,17 @@ async function updateUser (fields) {
   return response.data
 }
 
+async function deleteUsers (fields) {
+  const response = await axios.delete("http://localhost:4000/api/users/profile", {
+    headers: {
+      user_id: fields.user_id,
+    },
+  })
+
+  const user = response.data.data
+  return user
+}
+
 // --- Post ---------------------------------------------------------------------------------------
 // get a post data
 async function getPosts () {
@@ -118,6 +128,17 @@ async function replyPost (newPost) {
   })
 
   return response.data
+}
+
+async function delPostByUsers (fields) {
+  const response = await axios.delete("http://localhost:4000/api/postings", {
+    headers: {
+      user_id: fields.user_id,
+    },
+  })
+
+  const user = response.data.data
+  return user
 }
 
 async function followUser (fields) {
@@ -170,6 +191,8 @@ export {
   getUser,
   removeUser,
   updateUser,
+  deleteUsers,
+  delPostByUsers,
   setUser,
   followUser,
   unfollowUser,

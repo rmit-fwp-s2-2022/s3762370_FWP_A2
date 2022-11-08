@@ -1,10 +1,12 @@
 import React from 'react'
 import { Text, TextTitle, UserImage } from '../Layout/Layoutcss'
 import { useState } from 'react'
-import { Link } from "react-router-dom"
-import { getUser } from "../data/repository"
+import { useNavigate, Link } from "react-router-dom"
+import { getUser, deleteUsers, delPostByUsers, findUser } from "../data/repository"
 
 const Profile = (props) => {
+
+    const navigate = useNavigate()
 
     const users = getUser()
     const [fields, setFields] = useState({
@@ -16,10 +18,17 @@ const Profile = (props) => {
 
     const [showModal, setShowModal] = React.useState(false)
 
-    function deleteUser () {
+    const deleteUser = async () => {
         setShowModal(false)
+        const user = await findUser(props.userLoggedIn)
+        await deleteUsers({
+            user_id: user.user_id,
+        })
+        await delPostByUsers({
+            user_id: user.user_id,
+        })
         localStorage.clear()
-
+        navigate("/login")
     }
 
     if (fields.username) {
@@ -57,11 +66,11 @@ const Profile = (props) => {
                                         {/*inside of card modal*/}
                                         <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
 
-                                            {/* <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                                            <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                                                 <h3 className="text-3xl font-semibold">
                                                     Delete account
                                                 </h3>
-                                            </div> */}
+                                            </div>
 
                                             <div className="relative p-6 flex-auto">
                                                 <p className="my-4 text-slate-500 text-lg leading-relaxed">

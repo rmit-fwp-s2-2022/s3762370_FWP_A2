@@ -26,12 +26,9 @@ const Login = (props) => {
     //　save by API
     const handleSubmit = async (event) => {
         event.preventDefault()
-        console.log("pre-checking")
 
         // const newUser = await verifyUser(fields.username, fields.password);
         const newUser = await verifyUser(fields)
-
-        console.log("middle-checking")
 
         if (newUser.success === 0) {
             // Login failed, reset password field to blank and set error message.
@@ -39,10 +36,9 @@ const Login = (props) => {
             setErr("Username and / or password invalid, please try again.")
             return
         }
-        console.log("after-checking")
-        console.log(newUser)
 
         // Set user state.
+
         props.loginUser(newUser.user)
 
         // Navigate to the home page.

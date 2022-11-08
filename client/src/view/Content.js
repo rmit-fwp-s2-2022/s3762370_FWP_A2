@@ -13,7 +13,7 @@ const Content = (props) => {
 
     return (
         <Main>
-            <Profile userLoggedIn={props.user.username} />
+            <Profile userLoggedIn={props.user.user_id} />
             <div className="mt-10 text-[#404040]">
                 <TextTitle>Welcome, {props.user.username}</TextTitle>
                 <Text>quam pellentesque, Dec 1t,2018</Text>

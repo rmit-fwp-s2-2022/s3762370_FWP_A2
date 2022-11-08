@@ -185,6 +185,16 @@ exports.deletePosting = async (req, res) => {
   }
 }
 
+exports.delPostingByUser = async (req, res) => {
+
+  await db.posting.destroy({
+    where: {
+      user_id: req.headers.user_id,
+    },
+  })
+  return res.json({ success: 1, data: {} })
+}
+
 exports.replyPosting = async (req, res) => {
 
   const schema = Joi.object({
