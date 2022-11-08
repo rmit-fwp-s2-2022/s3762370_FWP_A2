@@ -1,93 +1,117 @@
-import React, { useState, useEffect } from "react"
-import ReactQuill from "react-quill"
-import "react-quill/dist/quill.snow.css"
-import { getPosts, createPost } from "../data/repository"
-import { TextTitle } from "../Layout/Layoutcss"
-import Main from "../Layout/main"
+import React, { useState, useEffect, useCallback } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import {
+  getPosts,
+  createPost,
+  getFollowedUser,
+  followUser,
+  unfollowUser,
+} from "../data/repository";
+import { TextTitle } from "../Layout/Layoutcss";
+import Main from "../Layout/main";
 
 // the reference from prac.9
-export default function Forum (props) {
-  const [post, setPost] = useState("")
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [posts, setPosts] = useState([])
+export default function Forum(props) {
+  const [post, setPost] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+
+  const [followedUser, setFollowedUser] = useState([]);
 
   // To show replying card
-  const [showModal, setShowModal] = React.useState(false)
-  const [reply, setReply] = useState([])
+  const [showModal, setShowModal] = React.useState(false);
+  const [reply, setReply] = useState([]);
 
   // post reply on database
-  const handleReply = async (e) => {
-
-  }
+  const handleReply = async (e) => {};
 
   // cancel a reply
   const cancelReply = (e) => {
-    setShowModal(false)
-  }
+    setShowModal(false);
+  };
+
+  const loadFollowedUser = async () => {
+    const followedUser = await getFollowedUser({
+      user_id: props.user.user_id,
+    });
+
+    setFollowedUser(followedUser);
+  };
 
   // Load posts.
   useEffect(() => {
-    async function loadPosts () {
-      const currentPosts = await getPosts()
+    async function loadPosts() {
+      const currentPosts = await getPosts();
 
-      setPosts(currentPosts)
-      setIsLoading(false)
+      setPosts(currentPosts);
+
+      await loadFollowedUser();
+
+      setIsLoading(false);
     }
 
-    loadPosts()
-  }, [])
+    loadPosts();
+  }, []);
+
+  const isFollowed = useCallback(
+    (userId) => {
+      return followedUser.some((user) => user.user_id === userId);
+    },
+    [followedUser]
+  );
 
   const resetPostContent = () => {
-    setPost("")
-    setErrorMessage(null)
-  }
+    setPost("");
+    setErrorMessage(null);
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     // As React Quill uses HTML tags within the text the empty check first removes all HTML elements using a regex.
     if (post.replace(/<(.|\n)*?>/g, "").trim().length === 0) {
-      setErrorMessage("A post cannot be empty.")
-      return
+      setErrorMessage("A post cannot be empty.");
+      return;
     }
 
     // check the number of letter is over 600 or not
     if (CheckLetter === "over") {
-      setErrorMessage("your posting is over letters")
-      return
+      setErrorMessage("your posting is over letters");
+      return;
     }
 
     // Create post.
     const newPost = {
       content: post,
       user_id: props.user.user_id,
-      username: props.user.user_name
-    }
+      username: props.user.user_name,
+    };
 
     // -------****-----------------link to the backend-----------------****----------
-    await createPost(newPost)
+    await createPost(newPost);
     // -------****-----------------*******************-----------------****----------
 
     // Add post to locally stored posts.
-    const currentPosts = await getPosts()
+    const currentPosts = await getPosts();
 
-    setPosts(currentPosts)
-    console.log(posts)
+    setPosts(currentPosts);
+    console.log(posts);
 
-    resetPostContent()
-  }
+    resetPostContent();
+  };
 
   // checking the number of letter
   const CheckLetter = (post) => {
-    let check = ""
+    let check = "";
 
     if (post.length > 600) {
-      check = "over"
+      check = "over";
     }
 
-    return check
-  }
+    return check;
+  };
 
   return (
     <div>
@@ -96,22 +120,32 @@ export default function Forum (props) {
           <fieldset>
             <TextTitle>New Post</TextTitle>
             <div className="form-group" style={{ marginBottom: "60px" }}>
-              <ReactQuill theme="snow" value={post} onChange={setPost} style={{ height: "180px" }} />
+              <ReactQuill
+                theme="snow"
+                value={post}
+                onChange={setPost}
+                style={{ height: "180px" }}
+              />
             </div>
-            {errorMessage !== null &&
+            {errorMessage !== null && (
               <div className="">
-                <span className="text-red-500 text-xs italic">{errorMessage}</span>
+                <span className="text-red-500 text-xs italic">
+                  {errorMessage}
+                </span>
               </div>
-            }
+            )}
             <div className="">
-              <input type="button"
+              <input
+                type="button"
                 className="bg-purple-500 rounded-md shadow-md hover:shadow-none hover:bg-purple-800 text-white py-2 px-5 font-bold cursor-pointer"
                 value="Reset"
-                onClick={resetPostContent} />
+                onClick={resetPostContent}
+              />
               <input
                 type="submit"
                 className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
-                value="Post" />
+                value="Post"
+              />
             </div>
           </fieldset>
         </form>
@@ -123,23 +157,32 @@ export default function Forum (props) {
               <fieldset>
                 <TextTitle>Replying</TextTitle>
                 <div className="form-group" style={{ marginBottom: "60px" }}>
-                  <ReactQuill theme="snow" value={reply} onChange={setReply} style={{ height: "180px" }} />
+                  <ReactQuill
+                    theme="snow"
+                    value={reply}
+                    onChange={setReply}
+                    style={{ height: "180px" }}
+                  />
                 </div>
-                {errorMessage !== null &&
+                {errorMessage !== null && (
                   <div className="form-group">
-                    <span className="text-red-500 text-xs italic">{errorMessage}</span>
+                    <span className="text-red-500 text-xs italic">
+                      {errorMessage}
+                    </span>
                   </div>
-                }
+                )}
                 <div className="form-group">
                   <input
                     type="button"
                     className="bg-purple-500 rounded-md shadow-md hover:shadow-none hover:bg-purple-800 text-white py-2 px-5 font-bold cursor-pointer"
                     value="Cancel"
-                    onClick={cancelReply} />
+                    onClick={cancelReply}
+                  />
                   <input
                     type="submit"
                     className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
-                    value="Reply" />
+                    value="Reply"
+                  />
                 </div>
               </fieldset>
             </form>
@@ -150,26 +193,58 @@ export default function Forum (props) {
         <hr />
         <TextTitle>Forum</TextTitle>
         <div>
-          {isLoading ?
+          {isLoading ? (
             <div>Loading posts...</div>
-            :
-            posts.length === 0 ?
-              <span className="text-black text-base">No posts have been submitted.</span>
-              :
-              posts.map((x) =>
-                <div className="border my-4 p-4 border-slate-600">
-                  <h6 className="text-base text-black">{x.username}</h6>
-                  <div dangerouslySetInnerHTML={{ __html: x.content }} />
-                  <input
-                    type="button"
-                    className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
-                    value="Reply"
-                    onClick={() => setShowModal(true)} />
-                </div>
-              )
-          }
+          ) : posts.length === 0 ? (
+            <span className="text-black text-base">
+              No posts have been submitted.
+            </span>
+          ) : (
+            posts.map((x) => (
+              <div className="border my-4 p-4 border-slate-600">
+                <h6 className="text-base text-black">{x.username}</h6>
+
+                {props.user.user_id !== x.user_id && (
+                  <span>
+                    {isFollowed(x.user_id) ? (
+                      <button
+                        onClick={() => {
+                          unfollowUser({
+                            user_id: props.user.user_id,
+                            followed_user_id: x.user_id,
+                          }).then(loadFollowedUser);
+                        }}
+                      >
+                        Unfollow
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          followUser({
+                            user_id: props.user.user_id,
+                            followed_user_id: x.user_id,
+                          }).then(loadFollowedUser);
+                        }}
+                      >
+                        Follow
+                      </button>
+                    )}
+                  </span>
+                )}
+                <button></button>
+                <div dangerouslySetInnerHTML={{ __html: x.content }} />
+                <div dangerouslySetInnerHTML={{ __html: x.createdAt }} />
+                <input
+                  type="button"
+                  className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
+                  value="Reply"
+                  onClick={() => setShowModal(true)}
+                />
+              </div>
+            ))
+          )}
         </div>
       </Main>
     </div>
-  )
+  );
 }

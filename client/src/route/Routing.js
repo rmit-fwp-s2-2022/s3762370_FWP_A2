@@ -1,39 +1,71 @@
-import React, { useState } from "react"
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
-import Login from "../forms/Login"
-import Register from "../forms/Register"
-import Forum from "../view/Forum"
-import Content from "../view/Content"
-import EditUser from "../forms/EditUser"
-import Navigation from "../view/Navigation"
-import { removeUser } from "../data/repository"
-import { getUser } from "../data/repository"
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
+import Login from "../forms/Login";
+import Register from "../forms/Register";
+import Forum from "../view/Forum";
+import Content from "../view/Content";
+import UserList from "../view/UserList";
+import EditUser from "../forms/EditUser";
+import Navigation from "../view/Navigation";
+import { removeUser } from "../data/repository";
+import { getUser } from "../data/repository";
 
-function Routing () {
-    const [user, setUser] = useState(getUser())
+const AuthGuard = ({ authenticated, children }) => {
+  //TODO: Add AuthGuard to all the page that has to be protected
+  const navigate = useNavigate();
 
-    const loginUser = (user) => {
-        setUser(user)
+  useEffect(() => {
+    console.log("layout");
+    if (!authenticated) {
+      navigate("/login");
     }
+  }, [authenticated, navigate]);
 
-    const logoutUser = () => {
-        removeUser()
-        setUser(null)
-    }
+  return authenticated ? children : null;
+};
 
-    return (
-        <>
-            <Router>
-                <Navigation user={user} logoutUser={logoutUser} />
-                <Routes>
-                    <Route path="/login" element={<Login loginUser={loginUser} />} />
-                    <Route path="/" element={<Content user={user} />} />
-                    <Route path="/register" element={<Register loginUser={loginUser} />} />
-                    <Route path="/edituser" element={<EditUser user={user} />} />
-                    <Route path="/forum" element={<Forum user={user} />} />
-                </Routes>
-            </Router>
-        </>
-    )
+function Routing() {
+  const [user, setUser] = useState(getUser());
+
+  const loginUser = (user) => {
+    setUser(user);
+  };
+
+  const logoutUser = () => {
+    removeUser();
+    setUser(null);
+  };
+
+  return (
+    <>
+      <Router>
+        <Navigation user={user} logoutUser={logoutUser} />
+        <Routes>
+          <Route path="/login" element={<Login loginUser={loginUser} />} />
+          <Route
+            path="/register"
+            element={<Register loginUser={loginUser} />}
+          />
+
+          <Route
+            path="/"
+            element={
+              <AuthGuard authenticated={user}>
+                <Content user={user} />
+              </AuthGuard>
+            }
+          />
+          <Route path="/edituser" element={<EditUser user={user} />} />
+          <Route path="/forum" element={<Forum user={user} />} />
+          <Route path="/userList" element={<UserList user={user} />} />
+        </Routes>
+      </Router>
+    </>
+  );
 }
-export default Routing
+export default Routing;
