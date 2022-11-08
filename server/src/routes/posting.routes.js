@@ -14,7 +14,11 @@ module.exports = (express, app) => {
 
   router.delete("/:posting_id", controller.deletePosting)
 
-  router.post("/reply/:posting_id", controller.replyPosting)
+  router.post("/reply/:posting_id", controller.replyPost)
+
+  // router.post("/like/:posting_id", controller.followUser)
+
+  // router.post("/unlike/:user_id", controller.unfollowUser)
 
   // Add routes to server.
   app.use("/api/postings", router)

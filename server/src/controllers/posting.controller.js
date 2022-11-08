@@ -186,48 +186,29 @@ exports.deletePosting = async (req, res) => {
 }
 
 exports.replyPosting = async (req, res) => {
-  try {
-    if (!req.headers.user_id) {
-      throw "Auth Failed or session expired"
-    }
 
-    const schema = Joi.object({
-      content: Joi.string().empty("").max(500),
-    })
+  const schema = Joi.object({
+    content: Joi.string().empty("").max(500),
+  })
 
-    await schema.validateAsync(req.body)
+  await schema.validateAsync(req.body)
 
-    let posting = await db.posting.findOne({
-      where: {
-        posting_id: req.params.posting_id,
-      },
-    })
-
-    if (_.isEmpty(posting)) {
-      throw "Posting not exist"
-    }
-
-    if (req.headers.user_id != posting.user_id) {
-      const follow = await db.follow.findOne({
-        where: {
-          user_id: req.headers.user_id,
-          follow_user_id: posting.user_id,
-        },
-      })
-
-      if (_.isEmpty(follow)) {
-        throw "Posting not exist"
-      }
-    }
-
-    const reply = await db.posting_reply.create({
+  let posting = await db.posting.findOne({
+    where: {
       posting_id: req.params.posting_id,
-      user_id: req.headers.user_id,
-      content: req.body.content,
-    })
+    },
+  })
 
-    return res.json({ success: 1, data: reply })
-  } catch (err) {
-    return res.json({ success: 0, data: err })
+  if (_.isEmpty(posting)) {
+    throw "Posting not exist"
   }
+
+  const reply = await db.posting_reply.create({
+    posting_id: req.params.posting_id,
+    user_id: req.headers.user_id,
+    content: req.body.content,
+  })
+
+  return res.json(reply)
+
 }

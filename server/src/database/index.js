@@ -20,6 +20,7 @@ db.posting_reply = require("./models/posting_reply.js")(
   DataTypes
 )
 db.follow = require("./models/follow.js")(db.sequelize, DataTypes)
+db.like = require("./models/like.js")(db.sequelize, DataTypes)
 
 // Include a sync option with seed data logic included.
 db.sync = async () => {

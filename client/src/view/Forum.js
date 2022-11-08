@@ -1,85 +1,110 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import React, { useState, useEffect, useCallback, useRef } from "react"
+import ReactQuill from "react-quill"
+import "react-quill/dist/quill.snow.css"
 import {
   getPosts,
   createPost,
   getFollowedUser,
   followUser,
   unfollowUser,
-} from "../data/repository";
-import { TextTitle } from "../Layout/Layoutcss";
-import Main from "../Layout/main";
+  replyPost
+} from "../data/repository"
+import { TextTitle } from "../Layout/Layoutcss"
+import Main from "../Layout/main"
 
 // the reference from prac.9
-export default function Forum(props) {
-  const [post, setPost] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
+export default function Forum (props) {
+  const [post, setPost] = useState("")
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [posts, setPosts] = useState([])
 
-  const [followedUser, setFollowedUser] = useState([]);
+  const [followedUser, setFollowedUser] = useState([])
 
   // To show replying card
-  const [showModal, setShowModal] = React.useState(false);
-  const [reply, setReply] = useState([]);
+  const [showModal, setShowModal] = React.useState(false)
+  const [reply, setReply] = useState(null)
+  const replyId = useRef()
 
   // post reply on database
-  const handleReply = async (e) => {};
+  const handleReply = async (e) => {
+    e.preventDefault()
+
+    console.log(replyId.current)
+
+    const newPost = {
+      content: post,
+      user_id: props.user.user_id,
+      posting_id: replyId.current
+    }
+
+    // -------****-----------------link to the backend-----------------****----------
+    await replyPost(newPost)
+    // -------****-----------------*******************-----------------****----------
+
+    // Add post to locally stored posts.
+    console.log(newPost)
+    const currentPosts = await getPosts()
+
+    setPosts(currentPosts)
+    console.log(posts)
+
+    resetPostContent()
+  }
 
   // cancel a reply
   const cancelReply = (e) => {
-    setShowModal(false);
-  };
+    setShowModal(false)
+  }
 
   const loadFollowedUser = async () => {
     const followedUser = await getFollowedUser({
       user_id: props.user.user_id,
-    });
+    })
 
-    setFollowedUser(followedUser);
-  };
+    setFollowedUser(followedUser)
+  }
 
   // Load posts.
   useEffect(() => {
-    async function loadPosts() {
-      const currentPosts = await getPosts();
+    async function loadPosts () {
+      const currentPosts = await getPosts()
 
-      setPosts(currentPosts);
+      setPosts(currentPosts)
 
-      await loadFollowedUser();
+      await loadFollowedUser()
 
-      setIsLoading(false);
+      setIsLoading(false)
     }
 
-    loadPosts();
-  }, []);
+    loadPosts()
+  }, [])
 
   const isFollowed = useCallback(
     (userId) => {
-      return followedUser.some((user) => user.user_id === userId);
+      return followedUser.some((user) => user.user_id === userId)
     },
     [followedUser]
-  );
+  )
 
   const resetPostContent = () => {
-    setPost("");
-    setErrorMessage(null);
-  };
+    setPost("")
+    setErrorMessage(null)
+  }
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     // As React Quill uses HTML tags within the text the empty check first removes all HTML elements using a regex.
     if (post.replace(/<(.|\n)*?>/g, "").trim().length === 0) {
-      setErrorMessage("A post cannot be empty.");
-      return;
+      setErrorMessage("A post cannot be empty.")
+      return
     }
 
     // check the number of letter is over 600 or not
     if (CheckLetter === "over") {
-      setErrorMessage("your posting is over letters");
-      return;
+      setErrorMessage("your posting is over letters")
+      return
     }
 
     // Create post.
@@ -87,31 +112,31 @@ export default function Forum(props) {
       content: post,
       user_id: props.user.user_id,
       username: props.user.user_name,
-    };
+    }
 
     // -------****-----------------link to the backend-----------------****----------
-    await createPost(newPost);
+    await createPost(newPost)
     // -------****-----------------*******************-----------------****----------
 
     // Add post to locally stored posts.
-    const currentPosts = await getPosts();
+    const currentPosts = await getPosts()
 
-    setPosts(currentPosts);
-    console.log(posts);
+    setPosts(currentPosts)
+    console.log(posts)
 
-    resetPostContent();
-  };
+    resetPostContent()
+  }
 
   // checking the number of letter
   const CheckLetter = (post) => {
-    let check = "";
+    let check = ""
 
     if (post.length > 600) {
-      check = "over";
+      check = "over"
     }
 
-    return check;
-  };
+    return check
+  }
 
   return (
     <div>
@@ -212,7 +237,7 @@ export default function Forum(props) {
                           unfollowUser({
                             user_id: props.user.user_id,
                             followed_user_id: x.user_id,
-                          }).then(loadFollowedUser);
+                          }).then(loadFollowedUser)
                         }}
                       >
                         Unfollow
@@ -223,7 +248,7 @@ export default function Forum(props) {
                           followUser({
                             user_id: props.user.user_id,
                             followed_user_id: x.user_id,
-                          }).then(loadFollowedUser);
+                          }).then(loadFollowedUser)
                         }}
                       >
                         Follow
@@ -238,7 +263,10 @@ export default function Forum(props) {
                   type="button"
                   className="bg-red-500 rounded-md shadow-md hover:shadow-none hover:bg-red-800 text-white py-2 px-5 font-bold cursor-pointer ml-2"
                   value="Reply"
-                  onClick={() => setShowModal(true)}
+                  onClick={() => {
+                    replyId.current = x.posting_id
+                    setShowModal(true)
+                  }}
                 />
               </div>
             ))
@@ -246,5 +274,5 @@ export default function Forum(props) {
         </div>
       </Main>
     </div>
-  );
+  )
 }
