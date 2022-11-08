@@ -47,7 +47,7 @@ export default function Register (props) {
     props.loginUser(newUser.data)
 
     // Navigate to the home page.
-    navigate("/")
+    navigate("/login")
   }
 
   const handleValidation = async () => {
