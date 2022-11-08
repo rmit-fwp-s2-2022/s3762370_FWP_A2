@@ -14,7 +14,7 @@ module.exports = (express, app) => {
 
   router.delete("/:posting_id", controller.deletePosting)
 
-  router.post("/reply/:posting_id", controller.replyPost)
+  router.post("/reply/:posting_id", controller.replyPosting)
 
   // router.post("/like/:posting_id", controller.followUser)
 
